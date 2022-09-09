@@ -1,62 +1,64 @@
-// BANK ACCOUNT
-
-// REQUIREMENTS
-// Create an object called account that has the following properties:
-// - accountName, should be the data type string
-// - balance, should be the data type number
-// - getBalance, should be a function
-// - deposit, also a function
-// - withdrawal, also a function
-// - getAccountName, function as well
-// - accountError, same as above function!
-// EXTRA: exitAccount, should be a function
-// EXTRA = optional
-
-// The object properties should work as following:
-// - accountName: the account holders name
-// - balance: total amount of the account should be initiated with 100 from start
-// - getBalance: a function that should display the total balance of the account
-// - deposit: a function that will deposit a certain amount into the account
-// - withdrawal: a function that will withdraw the desired amount of money from the account
-// - getAccountName: a function to display the account holders name
-// - accountError: trick question! you need to think about this and how to use it
-// but keep in mind that we do not want to repeat our code. So what could you use this function for?
-// EXTRA (OPTIONAL): exitaccount - a function that should close the whole window. You need to do some research yourself and
-// see if you can figure this one out.
-
-// Remember that a function is just a value. And if a function is just a
-// value then we can both pass it as a parameter to a function and
-// pass it as a property of an object.
-
-// The object should handle all of the functionality (logic)
-
-// You also need to create a function called atm()
-// The atm() function should be responsible for showing the user interface
-// and based on the user input show the right meny choice
-
-// In this assignment you will practice:
-// Objects
-// Functions
-// This keyword
-// Statements and operators
-
-// && operator
-// || operator
-
-// A user should NOT be able to deposit och withdraw negative number!
-// A user should NOT be able to deposit or withdraw an empty string, leaving the input empty
-// A user should NOT be able to withdraw a larger total sum that the actual balance of the account
-// A user should NOT be able to put anything that is NOT a number in the input
-
-// In this assignment you do not have to create any HTML you will only output
-// to the console. But you will use prompt instead of just regular console.
-
-// to handle one of the potential errors you can use this built in method:
-const variableName = 10;
-isNaN(variableName);
+const account = {
+  balance: 100,
+  getBalance: function () {
+    return this.balance
+  },
+  deposit: function (amount) {
+    const num = Number(amount)
+    if (this.accountError('deposit', num)) return
+    this.balance += num
+  },
+  withdrawal: function (amount) {
+    const num = Number(amount)
+    if (this.accountError('withdraw', num)) return
+    if ((this.balance - num) < 0) return 'Amount to withdraw exceeds your available balance.'
+    this.balance -= num
+  },
+  getAccountName: function () {
+    return this.accountName
+  },
+  exitAccount: function () {
+    const yes = confirm('Are you sure?')
+    if (yes) return null
+  },
+  accountError: function (action, value) {
+    if (isNaN(value)) return true
+    if (value < 0) {
+      alert(`You cannot ${action} negative amounts.`)
+      return true
+    }
+  },
+  accountName: 'My Account Name',
+}
 
 function atm() {
-  const message = parseFloat(prompt("Display message"));
+  const message = prompt("Select a choice 1) See balance 2) Make a deposit 3) Make a withdrawal 4) Get account name 5) Exit".replace(/ ([0-9]\))/g, '\n$1'))
   // you need to answer the question why we are using parseFloat() method here
+  // All prompts and most user input, including from input elements of all varying type attribute are string values.
+
+  if (message === null) return // Close ATM early.
+
+  const request = Number(message)
+
+  if (isNaN(request)) return atm()
+
   // either use a if/else statement or a switch. Write a comment and motivate your choice
+  // How bout neither, for fun.
+  let value
+  if (request === 2 || request === 3) value = Number(prompt(`How much would you like to ${request === 3 ? 'withdraw' : 'deposit'}?`))
+
+  /* Very unreadable JavaScript. Don't do this. Ever. */
+  // This code is reliant on account object always having the exact properties in the same places.
+  // JavaScript isn't very keen on keeping this where they should be. This may get ugly in the future.
+  const func = Object.values(account)[request]
+  let response
+  if (func) response = func.bind(account)(value)
+  /* End-of-unreadable code */
+
+  if (response != null) alert(response)
+
+  // Null but not undefined, only exitAccount returns null.
+  if (response !== null) atm()
 }
+
+atm()
