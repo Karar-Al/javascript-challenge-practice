@@ -19,7 +19,8 @@ const account = {
   },
   exitAccount: function () {
     const yes = confirm('Are you sure?')
-    if (yes) return null
+    if (yes) window.close()
+    return null
   },
   accountError: function (action, value) {
     if (isNaN(value)) return true
